@@ -1,0 +1,23 @@
+version: "3"
+services:
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    links:
+      - mongodb
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    restart: always
+    volumes:
+      - ./db:/data/db
+    ports:
+      - "27017:27017"
