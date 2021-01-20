@@ -1,0 +1,39 @@
+{
+  "name": "raccoon-backend",
+  "version": "0.1.0",
+  "description": "Backend of Raccoon, A real-time quiz service. DSC UOS #2020-fall-web",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_ENV=production && yarn server:prod",
+    "server:prod": "node dist/app.js",
+    "build": "babel app.js --out-dir build",
+    "clean": "rimraf dist",
+    "server": "cross-env DEBUG=app nodemon --exec babel-node app.js",
+    "dev": "cross-env NODE_ENV=development yarn server",
+    "prod": "yarn clean && yarn build"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "cross-env": "^7.0.3",
+    "express": "^4.17.1",
+    "http-status-codes": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.12",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "rimraf": "^3.0.2"
+  }
+}
