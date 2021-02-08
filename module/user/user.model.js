@@ -8,18 +8,10 @@ const userSchema = new Schema({
 		type: String, 
 		required: true,
 		unique: true,
-		// validate: {
-		// 	validator: validator.isEmail,
-		// 	message: '{VALUE} is not a valid email'
-		// }
+	},
+	password: {
+		type: String
 	}
-	// password: {
-	// 	type: String
-	// },
-	// createdAt: {
-	// 	type: Date, 
-	// 	default: Date.now
-	// }
 });
 // create model
 const userModel = mongoose.model('user', userSchema); 
