@@ -8,12 +8,6 @@ const userController = {};
 userController.userCreate = async (req, res) => {
   try {
     console.log(req.body);
-		// req.body.tmp = 1;
-		// res.body.tmp = 1;
-		// var user = { id: 1 }; 
-		// body('email').isEmail();
-		// const errors = validationResult(req);
-		
     const user = await userModel.create({
       email: req.body.email,
 			password: req.body.password
@@ -27,6 +21,7 @@ userController.userCreate = async (req, res) => {
   }
 };
 
+// 모든 회원 정보 보여주기
 userController.userFind = async (req, res) => {
   try {
     const users = await userModel.find();
@@ -38,13 +33,20 @@ userController.userFind = async (req, res) => {
   }
 };
 
-userController.email_find = async (req, res) => {
+// 로그인
+userController.login = async (req, res) => {
   try {
-    const user = await userModel.findById(req.params.id);
+		const user = await userModel.findOne({
+      email: req.body.email,
+			password: req.body.password
+		});
+    // const user = await userModel.findById(req.params.id);
     if (!user) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "user not found" });
+        // .json({ message: "user not found" });
+				.send('가입 되지 않은 회원입니다.');
+				// .redirect("/api-docs");														// 로그인 화면으로 다시 redirect
     }
     return res.json(user);
   } catch (error) {
