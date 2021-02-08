@@ -10,6 +10,17 @@
 	"extends": ["plugin:prettier/recommended"],
 	"plugins": ["prettier"],
 	"rules": {
-		"prettier/prettier": "error"
+		"prettier/prettier": [
+			"error",
+			{
+					"endOfLine": "auto"
+			}
+		]
+	},
+	{
+		"useTabs": true,
+			"trailingComma": "es5",
+			"semi": true,
+			"singleQuote": true
 	}
 }
