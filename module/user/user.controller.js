@@ -4,8 +4,8 @@ import { StatusCodes, ReasonPhrases } from "http-status-codes";
 
 const userController = {};
 
-// email로 회원가입
-userController.email_create = async (req, res) => {
+// email, password 회원가입
+userController.userCreate = async (req, res) => {
   try {
     console.log(req.body);
 		// req.body.tmp = 1;
@@ -22,11 +22,12 @@ userController.email_create = async (req, res) => {
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.toString() });
+      // .json({ error: error.toString() });
+			.send('중복된 이메일입니다.');
   }
 };
 
-userController.findAll = async (req, res) => {
+userController.userFind = async (req, res) => {
   try {
     const users = await userModel.find();
     return res.json(users);
