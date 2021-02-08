@@ -48,7 +48,9 @@ userController.login = async (req, res) => {
 				.send('가입 되지 않은 회원입니다.');
 				// .redirect("/api-docs");														// 로그인 화면으로 다시 redirect
     }
-    return res.json(user);
+		// 가입된 회원인 경우 토큰 인증 함수 실행
+		return userController.userSession(user);
+    // return res.json(user);
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -56,6 +58,37 @@ userController.login = async (req, res) => {
   }
 };
 
+userController.userSession = async (req, user) => {
+  try {
+    const users = user;
+    return res.json(users);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.toString() });
+  }
+};
+
+// JWT
+/*
+userController.
+var opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'secret';
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+    User.findOne({id: jwt_payload.sub}, function(err, user) {
+        if (err) {
+            return done(err, false);
+        }
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+            // or you could create a new account
+        }
+    });
+}));
+*/
 userController.update = async (req, res) => {
   try {
     let user = await userModel.findById(req.params.id);
