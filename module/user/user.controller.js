@@ -1,12 +1,20 @@
 import { userModel } from "./user.model";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
+// import { body, validationResult } from "validator";
 
 const userController = {};
 
-userController.signup = async (req, res) => {
+// email로 회원가입
+userController.email_create = async (req, res) => {
   try {
     console.log(req.body);
-    const user = await userModel.signup({
+		// req.body.tmp = 1;
+		// res.body.tmp = 1;
+		// var user = { id: 1 }; 
+		// body('email').isEmail();
+		// const errors = validationResult(req);
+		
+    const user = await userModel.create({
       email: req.body.email,
 			// password: req.body.password
     });
@@ -29,7 +37,7 @@ userController.findAll = async (req, res) => {
   }
 };
 
-userController.findOne = async (req, res) => {
+userController.email_find = async (req, res) => {
   try {
     const user = await userModel.findById(req.params.id);
     if (!user) {
