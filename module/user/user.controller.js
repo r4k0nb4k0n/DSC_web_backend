@@ -21,18 +21,6 @@ userController.userCreate = async (req, res) => {
   }
 };
 
-// 모든 회원 정보 보여주기
-userController.userFind = async (req, res) => {
-  try {
-    const users = await userModel.find();
-    return res.json(users);
-  } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.toString() });
-  }
-};
-
 // 로그인
 userController.login = async (req, res) => {
   try {
