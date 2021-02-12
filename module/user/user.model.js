@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 const saltRounds = 10;
 
@@ -54,11 +55,23 @@ userSchema.methods.comparePassword = function(plainPassword) {		// comparePasswo
 
 // 토큰 생성
 userSchema.methods.generateToken = function() {
-	const token = jwt.sign(this._id.toHexString(),"secretToken");
+	const token = jwt.sign(this._id.toHexString(),"zeze");
 	this.token = token;
 	return this.save()
 	.then((user) => user);
 	// .catch((err) => err);
+};
+
+// token을 통해 user 정보 가져오기
+userSchema.statics.findByToken = function (token) {
+	let user = this;
+	// secretToken을 통해 user의 id값을 받아오고 해당 아이디를 통해 DB에 접근해서 유저의 정보를 가져온다
+	return jwt.verify(token, "zeze", function(err, decoded) {	// jwt.verify(token, "지정해둔 특정 문자")
+		return user
+		.findOne({_id: decoded, token: token})
+		.then((user) => user)
+		.catch((err) => err);
+	});
 };
 
 // create model
