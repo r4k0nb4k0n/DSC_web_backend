@@ -1,7 +1,10 @@
 import { userModel } from "./user.model";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
+import { auth } from "../middleware/auth";
+
 
 const userController = {};
+
 
 // email, password 회원가입
 userController.userCreate = async (req, res) => {
@@ -56,6 +59,16 @@ userController.login = async (req, res) => {
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: error.toString() });
   }
+};
+
+// auth 미들웨어 가져오기
+// auth 미들웨어에서 필요한 것: token을 찾아 검증
+userController.auth = auth,(req, res) => {
+	res.status(200).json({
+		_id: req._id,
+		isAuth: true,
+		email: req.user.email
+	});
 };
 
 userController.userSession = async (req, user) => {
