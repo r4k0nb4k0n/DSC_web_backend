@@ -21,7 +21,6 @@ const userSchema = new Schema({
 userSchema.pre("save", function(next) {
 	let user = this;
 
-	// password 암호화
 	if (user.isModified('password')) {
 		bcrypt.genSalt(saltRounds, function(err, salt) {
 			if (err)
