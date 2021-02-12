@@ -19,24 +19,30 @@ userController.userCreate = async (req, res) => {
   }
 };
 
-// 로그인
+// 로그인시 DB에 저장된 email 먼저 찾고, email 있다면 암호화된 password랑 user가 입력한 password 비교
 userController.login = async (req, res) => {
   try {
 		const user = await userModel.findOne({
-      email: req.body.email,
-			password: req.body.password
+      // email 먼저 비교
+			email: req.body.email
 		});
     // const user = await userModel.findById(req.params.id);
     if (!user) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        // .json({ message: "user not found" });
 				.send('가입 되지 않은 회원입니다.');
 				// .redirect("/api-docs");														// 로그인 화면으로 다시 redirect
     }
-		// 가입된 회원인 경우 토큰 인증 함수 실행
-		return userController.userSession(user);
-    // return res.json(user);
+		user
+		.comparePassword(req.body.password)
+		.then((isMatch) => {
+		// password 일치 할 시
+			if(!isMatch) {
+				return res.send('비밀번호가 일치하지 않습니다.');
+			}
+		});
+		// password 일치 시
+		return res.send('로그인 되었습니다.');
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)

@@ -41,7 +41,12 @@ userSchema.pre("save", function(next) {
 });
 
 // 암호화된 password랑 user가 작성한 password 비교
-userSchema.methods.comepar
+userSchema.methods.comeparePassword = function(originPassword) {		// comeparePassword: 만든 메소드
+	return bcrypt
+	.comepare(originPassword, this.password)
+	.then((isMatch) => isMatch)
+	.catch((err) => err); 
+};
 
 // create model
 const userModel = mongoose.model('user', userSchema); 
