@@ -36,13 +36,21 @@ userController.login = async (req, res) => {
 		user
 		.comparePassword(req.body.password)
 		.then((isMatch) => {
-		// password 일치 할 시
+		// password 일치 안 할 시
 			if(!isMatch) {
 				return res.send('비밀번호가 일치하지 않습니다.');
 			}
 		});
 		// password 일치 시
-		return res.send('로그인 되었습니다.');
+		// return res.send('로그인 되었습니다.');
+		user
+		.generateToken()
+		.then((user) => {
+			res
+			.cookie("x_auth", user.token)
+			.status(200)
+			.send('로그인 되었습니다.');
+		})
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const saltRounds = 10;
 
@@ -13,6 +14,9 @@ const userSchema = new Schema({
 		trim: true,
 	},
 	password: {
+		type: String
+	},
+	token: {
 		type: String
 	},
 	createdAt: {
@@ -41,11 +45,20 @@ userSchema.pre("save", function(next) {
 });
 
 // 암호화된 password랑 user가 작성한 password 비교
-userSchema.methods.comeparePassword = function(originPassword) {		// comeparePassword: 만든 메소드
+userSchema.methods.comparePassword = function(plainPassword) {		// comparePassword: 사용자 정의 메소드
 	return bcrypt
-	.comepare(originPassword, this.password)
+	.compare(plainPassword, this.password)
 	.then((isMatch) => isMatch)
 	.catch((err) => err); 
+};
+
+// 토큰 생성
+userSchema.methods.generateToken = function() {
+	const token = jwt.sign(this._id.toHexString(),"secretToken");
+	this.token = token;
+	return this.save()
+	.then((user) => user);
+	// .catch((err) => err);
 };
 
 // create model
