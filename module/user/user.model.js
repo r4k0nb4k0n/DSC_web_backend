@@ -14,6 +14,10 @@ const userSchema = new Schema({
 	},
 	password: {
 		type: String
+	},
+	createdAt: {
+		type: Date,
+		default: Date.now
 	}
 });
 
@@ -35,6 +39,9 @@ userSchema.pre("save", function(next) {
 	} else
 		next();
 });
+
+// 암호화된 password랑 user가 작성한 password 비교
+userSchema.methods.comepar
 
 // create model
 const userModel = mongoose.model('user', userSchema); 
