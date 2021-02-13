@@ -18,6 +18,7 @@ userController.userCreate = async (req, res) => {
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+			// 메세지 보내지 말고 객체 만들어서 뽑아내는 방식으로
 			.send('중복된 이메일입니다.');
   }
 };
@@ -48,7 +49,14 @@ userController.login = async (req, res) => {
 		.generateToken()
 		.then((user) => {
 			res
+			// !0! "httponly" 걸어줘야 함, 개발자 모드시 토큰 탈취 가능
+			// https로만 요청할 수 있게 "cqoption"
 			.cookie("x_auth", user.token)
+			// 201: DB 새로 추가 됐을 때
+			// 303: 
+			// 401: 권한되지 않는 USER의 요청, 권한체크
+			// 400: controller catch 발생
+			// 4??: 인자 값 두 개인데 하나만 줬을 때?
 			.status(200)
 			.send('로그인 되었습니다.');
 		})

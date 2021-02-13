@@ -28,7 +28,7 @@ connectMongo().then(() => {
   // Use main router.
   app.use("/", mainRouter);
   const PORT = process.env.PORT || 8080;
-
+	app.use(cors());
   app.listen(PORT, () => {
     console.log(stateOfTheArt, "font-family:monospace");
     setTimeout(() => {

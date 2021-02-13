@@ -19,11 +19,16 @@
      },
      password: {
        type: String,
+       required: true,
      },
+     // 항상 필요
      createdAt: {
        type: Date,
        default: Date.now,
      },
+     updatedAt: {
+         
+     }
    });
    ```
 
@@ -33,9 +38,9 @@
    // email, password 회원가입
    import { userModel } from "./user.model";
    import { StatusCodes, ReasonPhrases } from "http-status-codes";
-
+   
    const userController = {};
-
+   
    userController.userCreate = async (req, res) => {
      try {
        console.log(req.body);
@@ -259,7 +264,7 @@
      {
        "alg": "HS256",
        "typ": "JWT"
-  }
+    }
      ```
 
    페이로드: Data
@@ -274,7 +279,7 @@
          "exp": 21313, 	 // 토큰 만료기간
          ...,
          "CreditCardNum": 3242342	// 절대 X, 헤더와 페이로드는 암호화되지 않음
-  }
+    }
      ```
 
    시그니쳐

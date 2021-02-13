@@ -22,20 +22,35 @@ const userSchema = new Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now
+	},
+	updatedAt: {
+		type: Date,
+		default: Date.now		
 	}
+
 });
 
 // password 암호화
 userSchema.pre("save", function(next) {
-	let user = this;
+	let user = this;		// this는 userSchema 객체
+	
+	/* 회원 정부 수정시 update 기록 저장 구문
+	now = new Date();
+	this.updated_at = now;
+	if(!this.created_at) {
+			this.created_at = now
+	}
+	*/
 
 	if (user.isModified('password')) {
 		bcrypt.genSalt(saltRounds, function(err, salt) {
-			if (err)
+			if (err) {
 				return next(err);
+			}
 			bcrypt.hash(user.password, salt, function(err, hash) {
-				if (err)
+				if (err) {
 					return next(err);
+				}
 				user.password = hash;
 				next();
 			}); 
@@ -47,6 +62,7 @@ userSchema.pre("save", function(next) {
 // 암호화된 password랑 user가 작성한 password 비교
 userSchema.methods.comparePassword = function(plainPassword) {		// comparePassword: 사용자 정의 메소드
 	return bcrypt
+	// this 사용을 지양하자 ;ㅅ;
 	.compare(plainPassword, this.password)
 	.then((isMatch) => isMatch)
 	.catch((err) => err); 
@@ -54,7 +70,9 @@ userSchema.methods.comparePassword = function(plainPassword) {		// comparePasswo
 
 // 토큰 생성
 userSchema.methods.generateToken = function() {
-	const token = jwt.sign(this._id.toHexString(),"zeze");
+	// 시크릿 노출하지 말자
+	// .env에 시크릿키 넣기
+	const token = jwt.sign(this._id.toHexString(),"zeze"); 
 	this.token = token;
 	return this.save()
 	.then((user) => user);
