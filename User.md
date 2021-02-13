@@ -54,6 +54,10 @@
 
    mvc 패턴으로 간단하게 회원가입 로직을 구현했다.
 
+   모델에서 email을 unique라고 설정했기에 중복된 email 입력 시 회원가입 되지 않게 설정했다.
+   
+   아직 프론트단이랑 합치지 않아서 에러시 res.send만 선언되게 작성했는데 어떻게 할 지 논의해봐야 한다.
+   
    사용자가 이메일, 비밀번호를 post하면 .create를 통해 DB에 "email", "password"에 저장됨  
 
 
@@ -113,5 +117,122 @@
    };
    ```
 
+   ```javascript
+   // 로그인시 DB에 저장된 email 먼저 찾고, email 있다면 암호화된 password랑 user가 입력한 password 비교
+   userController.login = async (req, res) => {
+     try {
+   		const user = await userModel.findOne({
+         // email 먼저 비교
+   			email: req.body.email
+   		});
+       if (!user) {
+         return res
+           .status(StatusCodes.BAD_REQUEST)
+   				.send('가입 되지 않은 회원입니다.');
+   				// .redirect("/api-docs");								
+       }
+   		user
+   		.comparePassword(req.body.password)
+   		.then((isMatch) => {
+   		// password 일치 안 할 시
+   			if(!isMatch) {
+   				return res.send('비밀번호가 일치하지 않습니다.');
+   			}
+   		});
+   		// password 일치 시
+   		res.send('로그인 되었습니다.');
+   		})
+     } catch (error) {
+       return res
+         .status(StatusCodes.INTERNAL_SERVER_ERROR)
+         .json({ error: error.toString() });
+     }
+   };
+   ```
    
+   .findOne을 통해 DB에서 email을 찾는다
+   
+   email이 있을 시 model 파일에 작성된 comparePassword(plainPassword)가 실행된다.
+   
+   입력 받은 req.body.password를 인자로 받은 comparePassword는 
+   
+   bcrypt.compare 함수를 통해 req.body.password와 해싱된 password를 비교한다.
+   
+   일치 시 토큰을 user에게 부여하고 로그인 시킨다.
 
+
+
+3. 토큰 부여
+
+   ```javascript
+   // model
+   // 토큰 생성
+   userSchema.methods.generateToken = function() {
+   	const token = jwt.sign(this._id.toHexString(),"zeze");	// secretKey
+   	this.token = token;
+   	return this.save()
+   	.then((user) => user);
+   	// .catch((err) => err);
+   };
+   ```
+
+   `jwt.sign(payload, secretKey)`에서 payload는 string 형식이어야 한다.
+
+   그러나 mongodb에서 생성되는 _id는 정수이므로 mongodb 함수인`.toHexString()`를 통해 형변환 해줘야 한다.
+
+   생성된 토큰은 DB에 저장해야 하므로 model에 token을 추가로 만들어준다.
+
+   ```javascript
+   // model
+   const userSchema = new Schema({
+   	...,
+   	token: {
+   		type: String
+   	},
+   	...
+   });
+   ```
+
+   ```javascript
+   // controller
+   userController.login = async (req, res) => {
+     try {
+   		const user = await userModel.findOne({
+         // email 먼저 비교
+   			email: req.body.email
+   		});
+       if (!user) {
+         return res
+           .status(StatusCodes.BAD_REQUEST)
+   				.send('가입 되지 않은 회원입니다.');
+       }
+   		user
+   		.comparePassword(req.body.password)
+   		.then((isMatch) => {
+   		// password 일치 안 할 시
+   			if(!isMatch) {
+   				return res.send('비밀번호가 일치하지 않습니다.');
+   			}
+   		});
+   		// password 일치 시
+   		user
+   		.generateToken()
+   		.then((user) => {
+   			res
+   			.cookie("x_auth", user.token)
+   			.status(200)
+   			.send('로그인 되었습니다.');
+   		})
+     } catch (error) {
+       return res
+         .status(StatusCodes.INTERNAL_SERVER_ERROR)
+         .json({ error: error.toString() });
+     }
+   };
+   ```
+
+   다시 login cotroller로 돌아가서 password가 일치된 user에 한해서 token을 부여한다.
+
+   user.generateToken()을 통해 token을 만들고 cookie에 쿠키에 token을 저장하여
+
+   유저가 서버에 request할 때마다 서버는 token이 일치하는지만 검증하면 된다.
