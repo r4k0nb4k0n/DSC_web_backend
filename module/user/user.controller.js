@@ -29,7 +29,6 @@ userController.login = async (req, res) => {
       // email 먼저 비교
 			email: req.body.email
 		});
-    // const user = await userModel.findById(req.params.id);
     if (!user) {
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -45,7 +44,6 @@ userController.login = async (req, res) => {
 			}
 		});
 		// password 일치 시
-		// return res.send('로그인 되었습니다.');
 		user
 		.generateToken()
 		.then((user) => {
