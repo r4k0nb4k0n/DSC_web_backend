@@ -71,17 +71,6 @@ userController.auth = auth,(req, res) => {
 	});
 };
 
-userController.userSession = async (req, user) => {
-  try {
-    const users = user;
-    return res.json(users);
-  } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.toString() });
-  }
-};
-
 userController.update = async (req, res) => {
   try {
     let user = await userModel.findById(req.params.id);
