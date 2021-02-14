@@ -1,7 +1,5 @@
 import { userModel } from "./user.model";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
-import { auth } from "../middleware/auth";
-
 
 const userController = {};
 
@@ -67,16 +65,7 @@ userController.login = async (req, res) => {
   }
 };
 
-// auth 미들웨어 가져오기
-// auth 미들웨어에서 필요한 것: token을 찾아 검증
-userController.auth = auth,(req, res) => {
-	res.status(200).json({
-		_id: req._id,
-		isAuth: true,
-		email: req.user.email
-	});
-};
-
+// 회원정보 수정
 userController.update = async (req, res) => {
   try {
     let user = await userModel.findById(req.params.id);
@@ -95,6 +84,7 @@ userController.update = async (req, res) => {
   }
 };
 
+// 회원탈퇴
 userController.delete = async (req, res) => {
   try {
     const user = await userModel.findByIdAndRemove(req.params.id);

@@ -10,7 +10,6 @@ import mainRouter from "./routes";
 import connectMongo from "./config/mongoConnect";
 // State of the art.
 import stateOfTheArt from "./state.of.the.art";
-import cookieParser from "cookie-parser";
 
 // First connect to MongoDB, and then...
 connectMongo().then(() => {
@@ -22,13 +21,13 @@ connectMongo().then(() => {
       extended: true,
     })
   );
-	app.use(cookieParser());
+
   // Log everything at dev level.
   app.use(morgan("dev"));
   // Use main router.
   app.use("/", mainRouter);
   const PORT = process.env.PORT || 8080;
-	app.use(cors());
+
   app.listen(PORT, () => {
     console.log(stateOfTheArt, "font-family:monospace");
     setTimeout(() => {
