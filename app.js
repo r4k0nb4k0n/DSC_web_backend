@@ -11,6 +11,11 @@ import connectMongo from "./config/mongoConnect";
 // State of the art.
 import stateOfTheArt from "./state.of.the.art";
 
+// import './module/todo/todo.routes';
+
+// import validator from "validator";
+
+
 // First connect to MongoDB, and then...
 connectMongo().then(() => {
   const app = express();
